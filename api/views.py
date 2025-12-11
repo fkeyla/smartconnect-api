@@ -218,3 +218,34 @@ class BarreraViewSet(viewsets.ModelViewSet):
         barreras = self.queryset.filter(estado=Barrera.ABIERTA)
         serializer = self.get_serializer(barreras, many=True)
         return Response(serializer.data)
+
+
+# ============================================
+# HANDLERS PERSONALIZADOS DE ERRORES HTTP
+# ============================================
+
+@api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+def error_404(request, exception=None):
+    """
+    Handler personalizado para rutas no encontradas (404)
+    Maneja todos los métodos HTTP y devuelve una respuesta JSON consistente
+    """
+    return Response({
+        "error": "Recurso no encontrado",
+        "detail": "La ruta solicitada no existe en la API",
+        "status_code": 404,
+        "path": request.path
+    }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+def error_500(request):
+    """
+    Handler personalizado para errores internos del servidor (500)
+    Captura errores inesperados y devuelve respuesta JSON
+    """
+    return Response({
+        "error": "Error interno del servidor",
+        "detail": "Ha ocurrido un error inesperado. Por favor contacte al administrador.",
+        "status_code": 500
+    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
