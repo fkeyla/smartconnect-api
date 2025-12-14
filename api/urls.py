@@ -10,7 +10,8 @@ from .views import (
     PerfilUsuarioViewSet,
     SensorViewSet,
     EventoViewSet,
-    BarreraViewSet
+    BarreraViewSet,
+    CustomTokenObtainPairView
 )
 
 # Configurar el router de DRF
@@ -26,8 +27,8 @@ urlpatterns = [
     # Endpoint de información de la API
     path('info/', api_info, name='api_info'),
     
-    # Autenticación JWT
-    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # Autenticación JWT con mensajes en español
+    path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     # Incluir todas las rutas del router

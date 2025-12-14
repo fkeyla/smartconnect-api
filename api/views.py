@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Departamento, Rol, PerfilUsuario, Sensor, Evento, Barrera
 from .serializers import (
@@ -15,9 +16,15 @@ from .serializers import (
     EventoSerializer,
     EventoCreateSerializer,
     BarreraSerializer,
-    BarreraEstadoSerializer
+    BarreraEstadoSerializer,
+    CustomTokenObtainPairSerializer
 )
 from .permissions import IsAdminOrReadOnly, IsAdminOnly, IsOwnerOrAdmin
+
+
+# Vista personalizada para login con mensajes en español
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 @api_view(['GET'])

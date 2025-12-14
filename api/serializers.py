@@ -217,3 +217,45 @@ class BarreraEstadoSerializer(serializers.ModelSerializer):
         instance.estado = validated_data.get('estado', instance.estado)
         instance.save()
         return instance
+
+
+# Serializer personalizado para login con mensajes en español
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import authenticate
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Serializer personalizado para login con mensajes en español"""
+    
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+        
+        if username and password:
+            user = authenticate(request=self.context.get('request'),
+                              username=username, password=password)
+            
+            if not user:
+                raise serializers.ValidationError(
+                    'No se encontró ninguna cuenta activa con las credenciales proporcionadas',
+                    code='authorization'
+                )
+            
+            if not user.is_active:
+                raise serializers.ValidationError(
+                    'Esta cuenta está desactivada',
+                    code='authorization'
+                )
+        else:
+            raise serializers.ValidationError(
+                'Debe incluir "username" y "password"',
+                code='authorization'
+            )
+        
+        refresh = self.get_token(user)
+        
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+        
+        return data
